@@ -1,12 +1,9 @@
 package setup;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-
-import static javafx.scene.input.KeyCode.M;
 
 /**
  * Created by Karol on 24/04/2017.
@@ -14,7 +11,7 @@ import static javafx.scene.input.KeyCode.M;
 public class Parameters {
 
     private ClassLoader classLoader;
-    private List<Integer> targetValues;
+    private List<Double> targetValues;
     private Map<Integer, List<Double>> heuristicValues;
     private Map<Integer, List<Double>> pheromoneValues;
     private Map<Integer, List<Double>> killProbabilities;
@@ -32,12 +29,12 @@ public class Parameters {
         int weapons = Integer.valueOf(line.split(" ")[0]);
         int targets = Integer.valueOf(line.split(" ")[1]);
 
-        targetValues = new ArrayList<Integer>(targets);
+        targetValues = new ArrayList<Double>(targets);
         killProbabilities = new HashMap<>(weapons);
 
         line = bufferedReader.readLine();
         List<String> values = Arrays.asList(line.split(" "));
-        values.forEach((v) -> targetValues.add(Integer.valueOf(v)));
+        values.forEach((v) -> targetValues.add(Double.valueOf(v)));
 
         line = bufferedReader.readLine();
         Integer noOfWeapon = 0;
@@ -115,11 +112,23 @@ public class Parameters {
         }
     }
 
+    public Double getTargetValue(int index){
+        return targetValues.get(index);
+    }
+
+    public Double getKillProbability(int i, int k){
+        return killProbabilities.get(i).get(k);
+    }
+
     public int getNumOfTargets(){
         return targetValues.size();
     }
 
     public int getNumOfWeapons(){
         return killProbabilities.size();
+    }
+
+    public void setTargetValue(int index, Double element){
+        targetValues.set(index, element);
     }
 }
