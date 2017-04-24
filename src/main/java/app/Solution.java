@@ -17,7 +17,6 @@ public class Solution {
             updatePheromoneValuesLocally(k);
             Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
             Parameters.calculateHeuristicValues();
-            k++;
         }
 
         solutionValue = calculateSolution(allocations);
