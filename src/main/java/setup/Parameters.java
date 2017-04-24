@@ -21,6 +21,7 @@ public class Parameters {
     public Parameters() {
         this.classLoader = getClass().getClassLoader();
         this.pheromoneValues = new HashMap<>();
+        this.heuristicValues = new HashMap<>();
     }
 
     public void readParameters() throws IOException {
@@ -53,6 +54,7 @@ public class Parameters {
         System.out.println(killProbabilities);
 
         bufferedReader.close();
+        initMaps();
     }
 
     // TODO: now solutionValue is quite hardcoded. Should be specify type or smth
@@ -91,6 +93,20 @@ public class Parameters {
         for (int i = 0; i < heuristicValues.size(); i++) {
             for (int k = 0; k < heuristicValues.get(i).size(); i++) {
                 System.out.println(heuristicValues.get(i).get(k));
+            }
+        }
+    }
+
+    private void initMaps(){
+        int numOfTargets = targetValues.size();
+        int numOfWeapons = killProbabilities.size();
+
+        for (int i = 0; i < numOfTargets; i++) {
+            heuristicValues.put(i, new ArrayList<>());
+            pheromoneValues.put(i, new ArrayList<>());
+            for (int k = 0; k < numOfWeapons; k++) {
+                heuristicValues.get(i).add(0.0);
+                pheromoneValues.get(i).add(0.0);
             }
         }
     }
