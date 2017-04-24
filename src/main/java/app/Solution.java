@@ -39,8 +39,28 @@ public class Solution {
     }
 
     private int findTargetIndexForWeapon(int k) {
-        // TODO
-        return 0;
+        int targetIndex = 0;
+        double randomValue = Math.random();
+        double q = randomValue;
+
+        if (q < Parameters.q0) {
+            targetIndex = argMax(k);
+        } else {
+            double total = 0;
+            for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
+                total = total + Parameters.getHeuristicValues().get(i).get(k) * Parameters.getPheromoneValues().get(i).get(k);
+            }
+            q = randomValue * total;
+            total = 0;
+            for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
+                total = total + Parameters.getHeuristicValues().get(i).get(k) * Parameters.getPheromoneValues().get(i).get(k);
+                if (q <= total) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+        }
+        return targetIndex;
     }
 
     private void updatePheromoneValuesLocally(int k) {

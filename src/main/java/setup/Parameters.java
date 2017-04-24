@@ -17,6 +17,7 @@ public class Parameters {
     public static double EVAPORATION_RATE = 0.1;
     public static LocalTime END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
     public static int numOfAnts;
+    public static double q0 = 0.5;
 
     public static void readParameters(ClassLoader classLoader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("config.txt")));
