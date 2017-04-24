@@ -13,6 +13,8 @@ public class Main {
         try {
             Parameters parameters = new Parameters();
             parameters.readParameters();
+            parameters.calculateHeuristicValues();
+            parameters.printHeuristic();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -14,8 +14,9 @@ public class Parameters {
 
     private ClassLoader classLoader;
     private List<Integer> targetValues;
+    private Map<Integer, List<Double>> heuristicValues;
+    private Map<Integer, List<Double>> pheromoneValues;
     private Map<Integer, List<Double>> killProbabilities;
-    private Map<Integer, Integer> pheromoneValues;
 
     public Parameters() {
         this.classLoader = getClass().getClassLoader();
@@ -67,11 +68,30 @@ public class Parameters {
         while (i <= noOfTargets) {
             k = 0;
             while (k <= noOfWeapons) {
-                double val = 1/noOfAnts * solutionValue;
+                double val = 1 / noOfAnts * solutionValue;
 //                this.pheromoneValues.get(i)
                 k++;
             }
             i++;
+        }
+    }
+
+    public void calculateHeuristicValues() {
+        int numOfTargets = targetValues.size();
+        int numOfWeapons = killProbabilities.size();
+
+        for (int i = 0; i < numOfTargets; i++) {
+            for (int k = 0; k < numOfWeapons; k++) {
+                heuristicValues.get(i).set(k, targetValues.get(i) * killProbabilities.get(i).get(k));
+            }
+        }
+    }
+
+    public void printHeuristic() {
+        for (int i = 0; i < heuristicValues.size(); i++) {
+            for (int k = 0; k < heuristicValues.get(i).size(); i++) {
+                System.out.println(heuristicValues.get(i).get(k));
+            }
         }
     }
 }
