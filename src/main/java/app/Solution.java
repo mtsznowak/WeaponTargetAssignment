@@ -13,13 +13,21 @@ public class Solution {
         int i;
         for(int k = 0; k < Parameters.getNumOfWeapons(); k++){
             i = findTargetIndexForWeapon(k);
-            assignment.add(i);
+            if (assignment.size() != Parameters.getNumOfWeapons()) {            // awesome workaround
+                assignment.add(i);
+            } else {
+                assignment.set(k, i);
+            }
             updatePheromoneValuesLocally(k);
             Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
             Parameters.calculateHeuristicValues();
         }
 
         solutionValue = calculateSolution(assignment);
+    }
+
+    public void resetAssignments() {
+        assignment.clear();
     }
 
     private double calculateSolution(List<Integer> allocations) {
@@ -90,5 +98,9 @@ public class Solution {
 
     public List<Integer> getAssignment() {
         return assignment;
+    }
+
+    public void printAssignments() {
+        assignment.forEach(System.out::println);
     }
 }

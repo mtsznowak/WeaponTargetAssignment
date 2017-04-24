@@ -56,6 +56,7 @@ public class Main {
 
             }
             System.out.println(solution.getSolutionValue());
+            solution.printAssignments();
         } catch (IOException e) {
             e.printStackTrace();
         }
