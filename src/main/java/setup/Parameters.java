@@ -68,8 +68,8 @@ public class Parameters {
         while (i <= noOfTargets) {
             k = 0;
             while (k <= noOfWeapons) {
-                double val = 1 / noOfAnts * solutionValue;
-//                this.pheromoneValues.get(i)
+                double val = 1/noOfAnts * solutionValue;
+//                this.pheromoneValues.get(i).get(k) = val;
                 k++;
             }
             i++;
