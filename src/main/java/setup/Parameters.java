@@ -3,6 +3,7 @@ package setup;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static javafx.scene.input.KeyCode.M;
@@ -25,7 +26,7 @@ public class Parameters {
     }
 
     public void readParameters() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(classLoader.getResource("config.txt").getFile()));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("config.txt")));
 
         String line = bufferedReader.readLine();
         int weapons = Integer.valueOf(line.split(" ")[0]);
@@ -59,22 +60,15 @@ public class Parameters {
 
     // TODO: now solutionValue is quite hardcoded. Should be specify type or smth
     public void calculatePheromoneValues(int noOfAnts, double solutionValue) {
-//        while k <= noOfW eapons do
-//            pheromoneV alues[i][k] ← 1/noOfAnts × solutionV alue
+        solutionValue = 1.0;
 
-        solutionValue = 1;
-
-        int noOfTargets = this.targetValues.size();
-        int noOfWeapons = this.killProbabilities.size();
-        int i = 0, k;
-        while (i <= noOfTargets) {
-            k = 0;
-            while (k <= noOfWeapons) {
-                double val = 1/noOfAnts * solutionValue;
-//                this.pheromoneValues.get(i).get(k) = val;
-                k++;
+        int numOfTargets = targetValues.size();
+        int numOfWeapons = killProbabilities.size();
+        for (int i = 0; i < numOfTargets; i++) {
+            for (int k = 0; k < numOfWeapons; k++) {
+                double val = 1/(double)noOfAnts * solutionValue;
+                pheromoneValues.get(i).set(k, val);
             }
-            i++;
         }
     }
 
@@ -91,9 +85,19 @@ public class Parameters {
 
     public void printHeuristic() {
         for (int i = 0; i < heuristicValues.size(); i++) {
-            for (int k = 0; k < heuristicValues.get(i).size(); i++) {
-                System.out.println(heuristicValues.get(i).get(k));
+            for (int k = 0; k < heuristicValues.get(i).size(); k++) {
+                System.out.print(heuristicValues.get(i).get(k) + " ");
             }
+            System.out.println();
+        }
+    }
+
+    public void printPheromons() {
+        for (int i = 0; i < pheromoneValues.size(); i++) {
+            for (int k = 0; k < pheromoneValues.get(i).size(); k++) {
+                System.out.print(pheromoneValues.get(i).get(k) + " ");
+            }
+            System.out.println();
         }
     }
 
@@ -109,5 +113,13 @@ public class Parameters {
                 pheromoneValues.get(i).add(0.0);
             }
         }
+    }
+
+    public int getNumOfTargets(){
+        return targetValues.size();
+    }
+
+    public int getNumOfWeapons(){
+        return killProbabilities.size();
     }
 }
