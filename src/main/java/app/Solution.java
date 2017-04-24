@@ -6,20 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solution {
-    private List<Integer> allocations = new ArrayList<>();
+    private List<Integer> assignment = new ArrayList<>();
     private double solutionValue = Double.MAX_VALUE;
 
     public void constructSolution() {
         int i;
         for(int k = 0; k < Parameters.getNumOfWeapons(); k++){
             i = findTargetIndexForWeapon(k);
-            allocations.add(i);
+            assignment.add(i);
             updatePheromoneValuesLocally(k);
             Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
             Parameters.calculateHeuristicValues();
         }
 
-        solutionValue = calculateSolution(allocations);
+        solutionValue = calculateSolution(assignment);
     }
 
     private double calculateSolution(List<Integer> allocations) {
@@ -88,7 +88,7 @@ public class Solution {
         return solutionValue;
     }
 
-    public List<Integer> getAllocations() {
-        return allocations;
+    public List<Integer> getAssignment() {
+        return assignment;
     }
 }

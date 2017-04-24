@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 
-import static setup.Parameters.END_TIME;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -46,7 +44,7 @@ public class Main {
                     constructedSol.constructSolution();
                     if (constructedSol.getSolutionValue() < minSolutionValue) {
                         bestSolValue = constructedSol.getSolutionValue();
-                        iterationBestSolAlloc = constructedSol.getAllocations();
+                        iterationBestSolAlloc = constructedSol.getAssignment();
                         if (constructedSol.getSolutionValue() < solution.getSolutionValue()) {
                             solution = constructedSol;
                         }
@@ -57,6 +55,7 @@ public class Main {
                 Parameters.updatePheromoneValues(iterationBestSolAlloc, bestSolValue);
 
             }
+            System.out.println(solution.getSolutionValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
