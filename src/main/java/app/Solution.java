@@ -3,31 +3,22 @@ package app;
 import setup.Parameters;
 
 import java.util.ArrayList;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 public class Solution {
     private List<Integer> allocations = new ArrayList<>();
     private double solutionValue = Double.MAX_VALUE;
-    private Parameters parameters;
-    private int numOfAnts;
-    private static double EVAPORATION_RATE = 0.1;
-
-    Solution(Parameters parameters, int numOfAnts) {
-        this.parameters = parameters;
-        this.numOfAnts = numOfAnts;
-    }
 
     public void constructSolution() {
         int k = 1;
         int i;
 
-        while (k <= parameters.getNumOfWeapons()) {
+        while (k <= Parameters.getNumOfWeapons()) {
             i = findTargetIndexForWeapon(k);
             allocations.add(i);
             updatePheromoneValuesLocally(k);
-            parameters.setTargetValue(i, parameters.getTargetValue(i) * (1 - parameters.getKillProbability(i, k)));
-            parameters.calculateHeuristicValues();
+            Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
+            Parameters.calculateHeuristicValues();
             k++;
         }
 
@@ -36,13 +27,13 @@ public class Solution {
 
     private double calculateSolution(List<Integer> allocations) {
         double returnValue = 0.0;
-        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
-            for (int k = 0; k < parameters.getNumOfWeapons(); k++) {
-                if(allocations.get(k) == i) {
-                    parameters.setTargetValue(i, parameters.getTargetValue(i) * (1 - parameters.getKillProbability(i, k)));
+        for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
+            for (int k = 0; k < Parameters.getNumOfWeapons(); k++) {
+                if (allocations.get(k) == i) {
+                    Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
                 }
             }
-            returnValue += parameters.getTargetValue(i);
+            returnValue += Parameters.getTargetValue(i);
         }
         return returnValue;
     }
@@ -53,10 +44,10 @@ public class Solution {
     }
 
     private void updatePheromoneValuesLocally(int k) {
-        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
-            double tmp = parameters.getPheromoneValues().get(i).get(k) * EVAPORATION_RATE;
-            double val = tmp + (EVAPORATION_RATE * 1 / numOfAnts * solutionValue);
-            parameters.getPheromoneValues().get(i).set(k, val);
+        for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
+            double tmp = Parameters.getPheromoneValues().get(i).get(k) * Parameters.EVAPORATION_RATE;
+            double val = tmp + (Parameters.EVAPORATION_RATE * 1 / Parameters.getNumOfAnts() * solutionValue);
+            Parameters.getPheromoneValues().get(i).set(k, val);
         }
     }
 
@@ -65,8 +56,8 @@ public class Solution {
         double minValue = Double.MIN_VALUE;
         double maxValue = minValue;
 
-        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
-            double value = parameters.getPheromoneValues().get(i).get(k) * parameters.getHeuristicValues().get(i).get(k);
+        for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
+            double value = Parameters.getPheromoneValues().get(i).get(k) * Parameters.getHeuristicValues().get(i).get(k);
             if (value > maxValue) {
                 targetIndex = i;
                 maxValue = value;

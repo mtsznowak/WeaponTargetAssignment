@@ -3,26 +3,22 @@ package setup;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalTime;
 import java.util.*;
 
-/**
- * Created by Karol on 24/04/2017.
- */
 public class Parameters {
 
-    private ClassLoader classLoader;
-    private List<Double> targetValues;
-    private Map<Integer, List<Double>> heuristicValues;
-    private Map<Integer, List<Double>> pheromoneValues;
-    private Map<Integer, List<Double>> killProbabilities;
+    private static List<Double> targetValues;
+    private static Map<Integer, List<Double>> heuristicValues;
+    private static Map<Integer, List<Double>> pheromoneValues;
+    private static Map<Integer, List<Double>> killProbabilities;
+    private static int ALLOWED_TIME = 2; // TODO set time
+    private static LocalTime START_TIME = LocalTime.now();
+    public static double EVAPORATION_RATE = 0.1;
+    public static LocalTime END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
+    public static int numOfAnts;
 
-    public Parameters() {
-        this.classLoader = getClass().getClassLoader();
-        this.pheromoneValues = new HashMap<>();
-        this.heuristicValues = new HashMap<>();
-    }
-
-    public void readParameters() throws IOException {
+    public static void readParameters(ClassLoader classLoader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("config.txt")));
 
         String line = bufferedReader.readLine();
@@ -55,7 +51,9 @@ public class Parameters {
         initMaps();
     }
 
-    private void initMaps() {
+    private static void initMaps() {
+        pheromoneValues = new HashMap<>();
+        heuristicValues = new HashMap<>();
         int numOfTargets = targetValues.size();
         int numOfWeapons = killProbabilities.size();
 
@@ -69,18 +67,18 @@ public class Parameters {
         }
     }
 
-    public void calculatePheromoneValues(int noOfAnts, double solutionValue) {
+    public static void calculatePheromoneValues(double solutionValue) {
         int numOfTargets = targetValues.size();
         int numOfWeapons = killProbabilities.size();
         for (int i = 0; i < numOfTargets; i++) {
             for (int k = 0; k < numOfWeapons; k++) {
-                double val = 1 / (double) noOfAnts * solutionValue;
+                double val = 1 / (double) numOfAnts * solutionValue;
                 pheromoneValues.get(i).set(k, val);
             }
         }
     }
 
-    public void calculateHeuristicValues() {
+    public static void calculateHeuristicValues() {
         int numOfTargets = targetValues.size();
         int numOfWeapons = killProbabilities.size();
 
@@ -91,7 +89,20 @@ public class Parameters {
         }
     }
 
-    public void printHeuristic() {
+    public static void updatePheromoneValues(List<Integer> iterationBestSolAlloc, double bestSolValue) {
+        double PHEROMONE_INCREASE_RATE = 0.1;
+        for (int i = 0; i < getNumOfTargets(); i++) {
+            for (int k = 0; k < getNumOfWeapons(); k++) {
+                if (iterationBestSolAlloc.get(k) == i) {
+                    double tmp = getPheromoneValues().get(i).get(k) * (1 - PHEROMONE_INCREASE_RATE);
+                    double val = tmp + (PHEROMONE_INCREASE_RATE * (1/bestSolValue));
+                    getPheromoneValues().get(i).set(k, val);
+                }
+            }
+        }
+    }
+
+    public static void printHeuristic() {
         for (int i = 0; i < heuristicValues.size(); i++) {
             for (int k = 0; k < heuristicValues.get(i).size(); k++) {
                 System.out.print(heuristicValues.get(i).get(k) + " ");
@@ -100,7 +111,7 @@ public class Parameters {
         }
     }
 
-    public void printPheromons() {
+    public static void printPheromons() {
         for (int i = 0; i < pheromoneValues.size(); i++) {
             for (int k = 0; k < pheromoneValues.get(i).size(); k++) {
                 System.out.print(pheromoneValues.get(i).get(k) + " ");
@@ -109,31 +120,35 @@ public class Parameters {
         }
     }
 
-    public Double getTargetValue(int index) {
+    public static Double getTargetValue(int index) {
         return targetValues.get(index);
     }
 
-    public Double getKillProbability(int i, int k) {
+    public static Double getKillProbability(int i, int k) {
         return killProbabilities.get(i).get(k);
     }
 
-    public int getNumOfTargets() {
+    public static int getNumOfTargets() {
         return targetValues.size();
     }
 
-    public int getNumOfWeapons() {
+    public static int getNumOfWeapons() {
         return killProbabilities.size();
     }
 
-    public void setTargetValue(int index, Double element) {
+    public static void setTargetValue(int index, Double element) {
         targetValues.set(index, element);
     }
 
-    public Map<Integer, List<Double>> getHeuristicValues() {
+    public static Map<Integer, List<Double>> getHeuristicValues() {
         return heuristicValues;
     }
 
-    public Map<Integer, List<Double>> getPheromoneValues() {
+    public static Map<Integer, List<Double>> getPheromoneValues() {
         return pheromoneValues;
+    }
+
+    public static int getNumOfAnts() {
+        return numOfAnts;
     }
 }
