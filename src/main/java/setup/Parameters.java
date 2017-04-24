@@ -131,4 +131,12 @@ public class Parameters {
     public void setTargetValue(int index, Double element){
         targetValues.set(index, element);
     }
+
+    public Map<Integer, List<Double>> getHeuristicValues() {
+        return heuristicValues;
+    }
+
+    public Map<Integer, List<Double>> getPheromoneValues() {
+        return pheromoneValues;
+    }
 }

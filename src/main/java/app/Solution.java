@@ -45,6 +45,23 @@ public class Solution {
         return 0;
     }
 
+    //TODO minValue shouldn't be equal 0 i suppose
+    private int argMax(int k){
+        int targetIndex = 0;
+        double minValue = 0.0;
+        double maxValue = minValue;
+
+        for(int i = 0; i < parameters.getNumOfTargets(); i++){
+            double value = parameters.getPheromoneValues().get(i).get(k) * parameters.getHeuristicValues().get(i).get(k);
+            if(value > maxValue){
+                targetIndex = i;
+                maxValue = value;
+            }
+        }
+
+        return targetIndex;
+    }
+
     public double getValue() {
         return value;
     }
