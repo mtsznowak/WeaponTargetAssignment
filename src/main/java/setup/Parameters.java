@@ -55,15 +55,26 @@ public class Parameters {
         initMaps();
     }
 
-    // TODO: now solutionValue is quite hardcoded. Should be specify type or smth
-    public void calculatePheromoneValues(int noOfAnts, double solutionValue) {
-        solutionValue = 1.0;
+    private void initMaps() {
+        int numOfTargets = targetValues.size();
+        int numOfWeapons = killProbabilities.size();
 
+        for (int i = 0; i < numOfTargets; i++) {
+            heuristicValues.put(i, new ArrayList<>());
+            pheromoneValues.put(i, new ArrayList<>());
+            for (int k = 0; k < numOfWeapons; k++) {
+                heuristicValues.get(i).add(0.0);
+                pheromoneValues.get(i).add(0.0);
+            }
+        }
+    }
+
+    public void calculatePheromoneValues(int noOfAnts, double solutionValue) {
         int numOfTargets = targetValues.size();
         int numOfWeapons = killProbabilities.size();
         for (int i = 0; i < numOfTargets; i++) {
             for (int k = 0; k < numOfWeapons; k++) {
-                double val = 1/(double)noOfAnts * solutionValue;
+                double val = 1 / (double) noOfAnts * solutionValue;
                 pheromoneValues.get(i).set(k, val);
             }
         }
@@ -98,37 +109,23 @@ public class Parameters {
         }
     }
 
-    private void initMaps(){
-        int numOfTargets = targetValues.size();
-        int numOfWeapons = killProbabilities.size();
-
-        for (int i = 0; i < numOfTargets; i++) {
-            heuristicValues.put(i, new ArrayList<>());
-            pheromoneValues.put(i, new ArrayList<>());
-            for (int k = 0; k < numOfWeapons; k++) {
-                heuristicValues.get(i).add(0.0);
-                pheromoneValues.get(i).add(0.0);
-            }
-        }
-    }
-
-    public Double getTargetValue(int index){
+    public Double getTargetValue(int index) {
         return targetValues.get(index);
     }
 
-    public Double getKillProbability(int i, int k){
+    public Double getKillProbability(int i, int k) {
         return killProbabilities.get(i).get(k);
     }
 
-    public int getNumOfTargets(){
+    public int getNumOfTargets() {
         return targetValues.size();
     }
 
-    public int getNumOfWeapons(){
+    public int getNumOfWeapons() {
         return killProbabilities.size();
     }
 
-    public void setTargetValue(int index, Double element){
+    public void setTargetValue(int index, Double element) {
         targetValues.set(index, element);
     }
 

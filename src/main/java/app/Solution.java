@@ -3,22 +3,26 @@ package app;
 import setup.Parameters;
 
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 public class Solution {
     private List<Integer> allocations = new ArrayList<>();
-    private double value = Double.MAX_VALUE;
+    private double solutionValue = Double.MAX_VALUE;
     private Parameters parameters;
+    private int numOfAnts;
+    private static double EVAPORATION_RATE = 0.1;
 
-    Solution(Parameters parameters){
+    Solution(Parameters parameters, int numOfAnts) {
         this.parameters = parameters;
+        this.numOfAnts = numOfAnts;
     }
 
-    public void constructSolution(){
+    public void constructSolution() {
         int k = 1;
         int i;
 
-        while(k <= parameters.getNumOfWeapons()){
+        while (k <= parameters.getNumOfWeapons()) {
             i = findTargetIndexForWeapon(k);
             allocations.add(i);
             updatePheromoneValuesLocally(k);
@@ -27,33 +31,43 @@ public class Solution {
             k++;
         }
 
-        value = calculateSolutionValue(allocations);
+        solutionValue = calculateSolution(allocations);
     }
 
-    private double calculateSolutionValue(List<Integer> allocations) {
-        // TODO
-        return 0.0;
+    private double calculateSolution(List<Integer> allocations) {
+        double returnValue = 0.0;
+        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
+            for (int k = 0; k < parameters.getNumOfWeapons(); k++) {
+                if(allocations.get(k) == i) {
+                    parameters.setTargetValue(i, parameters.getTargetValue(i) * (1 - parameters.getKillProbability(i, k)));
+                }
+            }
+            returnValue += parameters.getTargetValue(i);
+        }
+        return returnValue;
     }
 
-    private int findTargetIndexForWeapon(int k){
+    private int findTargetIndexForWeapon(int k) {
         // TODO
         return 0;
     }
 
-    private int updatePheromoneValuesLocally(int k){
-        // TODO
-        return 0;
+    private void updatePheromoneValuesLocally(int k) {
+        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
+            double tmp = parameters.getPheromoneValues().get(i).get(k) * EVAPORATION_RATE;
+            double val = tmp + (EVAPORATION_RATE * 1 / numOfAnts * solutionValue);
+            parameters.getPheromoneValues().get(i).set(k, val);
+        }
     }
 
-    //TODO minValue shouldn't be equal 0 i suppose
-    private int argMax(int k){
+    private int argMax(int k) {
         int targetIndex = 0;
-        double minValue = 0.0;
+        double minValue = Double.MIN_VALUE;
         double maxValue = minValue;
 
-        for(int i = 0; i < parameters.getNumOfTargets(); i++){
+        for (int i = 0; i < parameters.getNumOfTargets(); i++) {
             double value = parameters.getPheromoneValues().get(i).get(k) * parameters.getHeuristicValues().get(i).get(k);
-            if(value > maxValue){
+            if (value > maxValue) {
                 targetIndex = i;
                 maxValue = value;
             }
@@ -62,8 +76,8 @@ public class Solution {
         return targetIndex;
     }
 
-    public double getValue() {
-        return value;
+    public double getSolutionValue() {
+        return solutionValue;
     }
 
     public List<Integer> getAllocations() {

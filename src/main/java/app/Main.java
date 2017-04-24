@@ -21,9 +21,6 @@ public class Main {
             parameters.calculateHeuristicValues();
             parameters.printHeuristic();
 
-            Solution solution = new Solution(parameters);
-            Solution constructedSol = new Solution(parameters);
-
             List<Integer> iterationBestSolAlloc = null;
             double minSolutionValue, bestSolValue = 0;
             int numOfTargets = parameters.getNumOfTargets();
@@ -37,7 +34,10 @@ public class Main {
                 numOfAnts = numOfWeapons;
             }
 
-            parameters.calculatePheromoneValues(numOfAnts, solution.getValue());
+            Solution solution = new Solution(parameters, numOfAnts);
+            Solution constructedSol = new Solution(parameters, numOfAnts);
+
+            parameters.calculatePheromoneValues(numOfAnts, solution.getSolutionValue());
 
             while (LocalTime.now().isBefore(END_TIME)) {
                 minSolutionValue = Double.MAX_VALUE;
@@ -45,10 +45,10 @@ public class Main {
 
                 while (antNo <= numOfAnts) {
                     constructedSol.constructSolution();
-                    if(constructedSol.getValue() < minSolutionValue){
-                        bestSolValue = constructedSol.getValue();
+                    if (constructedSol.getSolutionValue() < minSolutionValue) {
+                        bestSolValue = constructedSol.getSolutionValue();
                         iterationBestSolAlloc = constructedSol.getAllocations();
-                        if(constructedSol.getValue() < solution.getValue()){
+                        if (constructedSol.getSolutionValue() < solution.getSolutionValue()) {
                             solution = constructedSol;
                         }
                     }
@@ -63,14 +63,15 @@ public class Main {
         }
     }
 
-    private static void updatePheromoneValues(List<Integer> iterationBestSolAlloc, double bestSolValue){
+    private static void updatePheromoneValues(List<Integer> iterationBestSolAlloc, double bestSolValue) {
         // TODO: probably in parameters
     }
 
-    static void log(String x){
+    static void log(String x) {
         System.out.println(x);
     }
-    static void log(int x){
+
+    static void log(int x) {
         System.out.println(x);
     }
 }
