@@ -36,6 +36,7 @@ public class Main {
             Solution constructedSol = new Solution();
 
             Parameters.calculatePheromoneValues(solution.getSolutionValue());
+            Parameters.printPheromons();
 
             while (LocalTime.now().isBefore(Parameters.END_TIME)) {
                 minSolutionValue = Double.MAX_VALUE;

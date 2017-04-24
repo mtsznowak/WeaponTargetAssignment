@@ -10,10 +10,8 @@ public class Solution {
     private double solutionValue = Double.MAX_VALUE;
 
     public void constructSolution() {
-        int k = 1;
         int i;
-
-        while (k <= Parameters.getNumOfWeapons()) {
+        for(int k = 0; k < Parameters.getNumOfWeapons(); k++){
             i = findTargetIndexForWeapon(k);
             allocations.add(i);
             updatePheromoneValuesLocally(k);
