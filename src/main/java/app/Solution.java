@@ -5,6 +5,7 @@ import setup.Parameters;
 import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Random;
 
 public class Solution {
     private List<Integer> allocations = new ArrayList<>();
@@ -12,10 +13,12 @@ public class Solution {
     private Parameters parameters;
     private int numOfAnts;
     private static double EVAPORATION_RATE = 0.1;
+    private static double q0 = 0.5;
 
     Solution(Parameters parameters, int numOfAnts) {
         this.parameters = parameters;
         this.numOfAnts = numOfAnts;
+
     }
 
     public void constructSolution() {
@@ -48,8 +51,28 @@ public class Solution {
     }
 
     private int findTargetIndexForWeapon(int k) {
-        // TODO
-        return 0;
+        int targetIndex = 0;
+        double randomValue = Math.random();
+        double q = randomValue;
+
+        if(q < q0){
+            targetIndex = argMax(k);
+        }else{
+            double total = 0;
+            for(int i = 0; i < parameters.getNumOfTargets(); i++){
+                total = total + parameters.getHeuristicValues().get(i).get(k) * parameters.getPheromoneValues().get(i).get(k);
+            }
+            q = randomValue * total;
+            total = 0;
+            for(int i = 0; i < parameters.getNumOfTargets(); i++){
+                total = total + parameters.getHeuristicValues().get(i).get(k) * parameters.getPheromoneValues().get(i).get(k);
+                if(q <= total){
+                    targetIndex = i;
+                    break;
+                }
+            }
+        }
+        return targetIndex;
     }
 
     private void updatePheromoneValuesLocally(int k) {
