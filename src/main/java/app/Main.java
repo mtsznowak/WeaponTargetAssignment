@@ -3,6 +3,7 @@ package app;
 import setup.Parameters;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class Main {
             Parameters.printHeuristic();
 
             List<Integer> iterationBestSolAlloc = null;
-            double minSolutionValue, bestSolValue = 0;
+            BigDecimal minSolutionValue, bestSolValue = BigDecimal.ZERO;
             int numOfTargets = Parameters.getNumOfTargets();
             int numOfWeapons = Parameters.getNumOfWeapons();
             int numOfAnts;
@@ -37,15 +38,16 @@ public class Main {
             Parameters.printPheromons();
 
             while (LocalTime.now().isBefore(Parameters.END_TIME)) {
-                minSolutionValue = Double.MAX_VALUE;
+                minSolutionValue = BigDecimal.valueOf(Double.MAX_VALUE);
                 antNo = 1;
 
                 while (antNo <= numOfAnts) {
                     constructedSol.constructSolution();
-                    if (constructedSol.getSolutionValue() < minSolutionValue) {
+                    if (constructedSol.getSolutionValue().compareTo(minSolutionValue) == -1) {             //constructedSol.getSolutionValue() < minSolutionValue
+                        minSolutionValue = constructedSol.getSolutionValue();
                         bestSolValue = constructedSol.getSolutionValue();
                         iterationBestSolAlloc = constructedSol.getAssignment();
-                        if (constructedSol.getSolutionValue() < solution.getSolutionValue()) {
+                        if (constructedSol.getSolutionValue().compareTo(solution.getSolutionValue()) == -1) {     //constructedSol.getSolutionValue() < solution.getSolutionValue()
                             solution = constructedSol;
                         }
                     }

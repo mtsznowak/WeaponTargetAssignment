@@ -2,12 +2,13 @@ package app;
 
 import setup.Parameters;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Solution {
     private List<Integer> assignment = new ArrayList<>();
-    private double solutionValue = Double.MAX_VALUE;
+    private BigDecimal solutionValue = BigDecimal.valueOf(Double.MAX_VALUE);
 
     public void constructSolution() {
         int i;
@@ -19,7 +20,8 @@ public class Solution {
                 assignment.set(k, i);
             }
             updatePheromoneValuesLocally(k);
-            Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
+            BigDecimal subtract = BigDecimal.ONE.subtract(Parameters.getKillProbability(i, k));
+            Parameters.setTargetValue(i, Parameters.getTargetValue(i).multiply(subtract));
             Parameters.calculateHeuristicValues();
         }
 
@@ -30,36 +32,39 @@ public class Solution {
         assignment.clear();
     }
 
-    private double calculateSolution(List<Integer> allocations) {
-        double returnValue = 0.0;
+    private BigDecimal calculateSolution(List<Integer> allocations) {
+        BigDecimal returnValue = BigDecimal.ZERO;
         for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
             for (int k = 0; k < Parameters.getNumOfWeapons(); k++) {
                 if (allocations.get(k) == i) {
-                    Parameters.setTargetValue(i, Parameters.getTargetValue(i) * (1 - Parameters.getKillProbability(i, k)));
+                    BigDecimal subtract = BigDecimal.ONE.subtract(Parameters.getKillProbability(i, k));
+                    Parameters.setTargetValue(i, Parameters.getTargetValue(i).multiply(subtract));
                 }
             }
-            returnValue += Parameters.getTargetValue(i);
+            returnValue = returnValue.add(Parameters.getTargetValue(i));
         }
         return returnValue;
     }
 
     private int findTargetIndexForWeapon(int k) {
         int targetIndex = 0;
-        double randomValue = Math.random();
-        double q = randomValue;
+        BigDecimal randomValue = BigDecimal.valueOf(Math.random());
+        BigDecimal q = randomValue;
 
-        if (q < Parameters.q0) {
+        if (q.compareTo(Parameters.q0) == -1) {     //q < Parameters.q0
             targetIndex = argMax(k);
         } else {
-            double total = 0;
+            BigDecimal total = BigDecimal.ZERO;
             for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
-                total = total + Parameters.getHeuristicValues().get(i).get(k) * Parameters.getPheromoneValues().get(i).get(k);
+                BigDecimal tmp = Parameters.getHeuristicValues().get(i).get(k).multiply(Parameters.getPheromoneValues().get(i).get(k));
+                total = total.add(tmp);
             }
-            q = randomValue * total;
-            total = 0;
+            q = BigDecimal.valueOf(Math.random()).multiply(total);
+            total = BigDecimal.ZERO;
             for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
-                total = total + Parameters.getHeuristicValues().get(i).get(k) * Parameters.getPheromoneValues().get(i).get(k);
-                if (q <= total) {
+                BigDecimal tmp = Parameters.getHeuristicValues().get(i).get(k).multiply(Parameters.getPheromoneValues().get(i).get(k));
+                total = total.add(tmp);
+                if (q.compareTo(total) <= 0) {         //q <= total
                     targetIndex = i;
                     break;
                 }
@@ -70,20 +75,23 @@ public class Solution {
 
     private void updatePheromoneValuesLocally(int k) {
         for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
-            double tmp = Parameters.getPheromoneValues().get(i).get(k) * Parameters.EVAPORATION_RATE;
-            double val = tmp + (Parameters.EVAPORATION_RATE * 1 / Parameters.getNumOfAnts() * solutionValue);
+            BigDecimal tmp = Parameters.getPheromoneValues().get(i).get(k).multiply(Parameters.EVAPORATION_RATE);
+            BigDecimal augend = Parameters.EVAPORATION_RATE.multiply(BigDecimal.ONE)
+                    .divide(BigDecimal.valueOf(Parameters.getNumOfAnts()), Parameters.divisionPrecision, BigDecimal.ROUND_HALF_UP)
+                    .multiply(solutionValue);
+            BigDecimal val = tmp.add(augend);
             Parameters.getPheromoneValues().get(i).set(k, val);
         }
     }
 
     private int argMax(int k) {
         int targetIndex = 0;
-        double minValue = Double.MIN_VALUE;
-        double maxValue = minValue;
+        BigDecimal minValue = BigDecimal.valueOf(Double.MIN_VALUE);
+        BigDecimal maxValue = minValue;
 
         for (int i = 0; i < Parameters.getNumOfTargets(); i++) {
-            double value = Parameters.getPheromoneValues().get(i).get(k) * Parameters.getHeuristicValues().get(i).get(k);
-            if (value > maxValue) {
+            BigDecimal value = Parameters.getPheromoneValues().get(i).get(k).multiply(Parameters.getHeuristicValues().get(i).get(k));
+            if (value.compareTo(maxValue) == 1) {
                 targetIndex = i;
                 maxValue = value;
             }
@@ -92,7 +100,7 @@ public class Solution {
         return targetIndex;
     }
 
-    public double getSolutionValue() {
+    public BigDecimal getSolutionValue() {
         return solutionValue;
     }
 
