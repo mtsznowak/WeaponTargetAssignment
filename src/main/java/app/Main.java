@@ -13,6 +13,7 @@ public class Main {
         try {
             ClassLoader classLoader = new Main().getClass().getClassLoader();
             Parameters.readParameters(classLoader);
+            Parameters.readAlgorithmParameters(classLoader);
             Parameters.calculateHeuristicValues();
             Parameters.printHeuristic();
 
@@ -20,16 +21,7 @@ public class Main {
             BigDecimal minSolutionValue, bestSolValue = BigDecimal.ZERO;
             int numOfTargets = Parameters.getNumOfTargets();
             int numOfWeapons = Parameters.getNumOfWeapons();
-            int numOfAnts;
             int antNo;
-
-            if (numOfTargets > numOfWeapons) {          //TODO like said docor Kwiecien, number of ants should be dependent on user
-                numOfAnts = numOfTargets;
-            } else {
-                numOfAnts = numOfWeapons;
-            }
-
-            Parameters.numOfAnts = numOfAnts;
 
             Solution solution = new Solution();
 
@@ -40,7 +32,7 @@ public class Main {
                 minSolutionValue = BigDecimal.valueOf(Double.MAX_VALUE);
                 antNo = 1;
 
-                while (antNo <= numOfAnts) {
+                while (antNo <= Parameters.NUMBER_OF_ANTS) {
                     Solution constructedSol = new Solution();
                     constructedSol.constructSolution();
                     if (constructedSol.getSolutionValue().compareTo(minSolutionValue) == -1) {             //constructedSol.getSolutionValue() < minSolutionValue

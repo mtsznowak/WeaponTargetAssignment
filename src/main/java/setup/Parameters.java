@@ -2,6 +2,7 @@ package setup;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -14,17 +15,41 @@ public class Parameters {
     private static Map<Integer, List<BigDecimal>> heuristicValues;
     private static Map<Integer, List<BigDecimal>> pheromoneValues;
     private static Map<Integer, List<BigDecimal>> killProbabilities;
-    private static int ALLOWED_TIME = 1;                                            // TODO user should set that time
+    private static int ALLOWED_TIME;
     private static LocalTime START_TIME = LocalTime.now();
-    private static BigDecimal PHEROMONE_INCREASE_RATE = BigDecimal.valueOf(0.1);    //TODO i think it should be dependent on user but i don't know
-    public static BigDecimal EVAPORATION_RATE = BigDecimal.valueOf(0.1);            //TODO like above
-    public static BigDecimal q0 = BigDecimal.valueOf(0.5);                          //TODO like above
-    public static LocalTime END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
-    public static int numOfAnts;
+    private static BigDecimal PHEROMONE_INCREASE_RATE;
+    public static BigDecimal EVAPORATION_RATE;
+    public static BigDecimal q0;
+    public static LocalTime END_TIME;
+    public static int NUMBER_OF_ANTS;
     public static int divisionPrecision = 20;
 
+    public static void readAlgorithmParameters(ClassLoader classLoader) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("algorithmParams.txt")));
+
+        String line = bufferedReader.readLine();
+        ALLOWED_TIME = Integer.valueOf(line.split(" ")[1]);
+        line = bufferedReader.readLine();
+        NUMBER_OF_ANTS = Integer.valueOf(line.split(" ")[1]);
+        line = bufferedReader.readLine();
+        PHEROMONE_INCREASE_RATE = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
+        line = bufferedReader.readLine();
+        EVAPORATION_RATE = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
+        line = bufferedReader.readLine();
+        q0 = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
+        END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
+
+        System.out.println("ALLOWED_TIME " + ALLOWED_TIME);
+        System.out.println("NUMBER_OF_ANTS " + NUMBER_OF_ANTS);
+        System.out.println("PHEROMONE_INCREASE_RATE " + PHEROMONE_INCREASE_RATE);
+        System.out.println("EVAPORATION_RATE " + EVAPORATION_RATE);
+        System.out.println("q0 " + q0);
+
+        bufferedReader.close();
+    }
+
     public static void readParameters(ClassLoader classLoader) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("config.txt")));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("WTAparams.txt")));
 
         String line = bufferedReader.readLine();
         int weapons = Integer.valueOf(line.split(" ")[0]);
@@ -81,7 +106,7 @@ public class Parameters {
         int numOfWeapons = killProbabilities.size();
         for (int i = 0; i < numOfTargets; i++) {
             for (int k = 0; k < numOfWeapons; k++) {
-                BigDecimal division = BigDecimal.ONE.divide(BigDecimal.valueOf(numOfAnts), divisionPrecision, BigDecimal.ROUND_HALF_UP);
+                BigDecimal division = BigDecimal.ONE.divide(BigDecimal.valueOf(NUMBER_OF_ANTS), divisionPrecision, BigDecimal.ROUND_HALF_UP);
                 BigDecimal val = division.multiply(solutionValue);
                 pheromoneValues.get(i).set(k, val);
             }
@@ -162,7 +187,7 @@ public class Parameters {
     }
 
     public static int getNumOfAnts() {
-        return numOfAnts;
+        return NUMBER_OF_ANTS;
     }
 
     public static void resetTargetValues(){
