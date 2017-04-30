@@ -108,6 +108,14 @@ public class Solution {
         return assignment;
     }
 
+    public void setAssignment(List<Integer> assignment) {
+        this.assignment = assignment;
+    }
+
+    public void setSolutionValue(BigDecimal solutionValue) {
+        this.solutionValue = solutionValue;
+    }
+
     public void printAssignments() {
         assignment.forEach(System.out::println);
     }

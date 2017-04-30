@@ -10,16 +10,17 @@ import java.util.*;
 public class Parameters {
 
     private static List<BigDecimal> targetValues;
+    private static List<BigDecimal> firstTargetValues;
     private static Map<Integer, List<BigDecimal>> heuristicValues;
     private static Map<Integer, List<BigDecimal>> pheromoneValues;
     private static Map<Integer, List<BigDecimal>> killProbabilities;
-    private static int ALLOWED_TIME = 2; // TODO set time
+    private static int ALLOWED_TIME = 1;                                            // TODO user should set that time
     private static LocalTime START_TIME = LocalTime.now();
-    private static BigDecimal PHEROMONE_INCREASE_RATE = BigDecimal.valueOf(0.1);
-    public static BigDecimal EVAPORATION_RATE = BigDecimal.valueOf(0.1);
+    private static BigDecimal PHEROMONE_INCREASE_RATE = BigDecimal.valueOf(0.1);    //TODO i think it should be dependent on user but i don't know
+    public static BigDecimal EVAPORATION_RATE = BigDecimal.valueOf(0.1);            //TODO like above
+    public static BigDecimal q0 = BigDecimal.valueOf(0.5);                          //TODO like above
     public static LocalTime END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
     public static int numOfAnts;
-    public static BigDecimal q0 = BigDecimal.valueOf(0.5);
     public static int divisionPrecision = 20;
 
     public static void readParameters(ClassLoader classLoader) throws IOException {
@@ -30,11 +31,15 @@ public class Parameters {
         int targets = Integer.valueOf(line.split(" ")[1]);
 
         targetValues = new ArrayList<BigDecimal>(targets);
+        firstTargetValues = new ArrayList<BigDecimal>(targets);
         killProbabilities = new HashMap<>(weapons);
 
         line = bufferedReader.readLine();
         List<String> values = Arrays.asList(line.split(" "));
-        values.forEach((v) -> targetValues.add(BigDecimal.valueOf(Double.valueOf(v))));
+        values.forEach((v) -> {
+            targetValues.add(BigDecimal.valueOf(Double.valueOf(v)));
+            firstTargetValues.add(BigDecimal.valueOf(Double.valueOf(v)));
+        });
 
         line = bufferedReader.readLine();
         Integer noOfWeapon = 0;
@@ -109,6 +114,7 @@ public class Parameters {
     }
 
     public static void printHeuristic() {
+        System.out.println("Heuristic values:");
         for (int i = 0; i < heuristicValues.size(); i++) {
             for (int k = 0; k < heuristicValues.get(i).size(); k++) {
                 System.out.print(heuristicValues.get(i).get(k) + " ");
@@ -118,6 +124,7 @@ public class Parameters {
     }
 
     public static void printPheromons() {
+        System.out.println("Pheromons values:");
         for (int i = 0; i < pheromoneValues.size(); i++) {
             for (int k = 0; k < pheromoneValues.get(i).size(); k++) {
                 System.out.print(pheromoneValues.get(i).get(k) + " ");
@@ -156,5 +163,11 @@ public class Parameters {
 
     public static int getNumOfAnts() {
         return numOfAnts;
+    }
+
+    public static void resetTargetValues(){
+        for(int i = 0; i < targetValues.size(); i++){
+            targetValues.set(i,firstTargetValues.get(i));
+        }
     }
 }
