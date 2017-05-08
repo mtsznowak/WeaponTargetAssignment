@@ -6,7 +6,9 @@ import ui.Chart;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -16,49 +18,45 @@ public class Main {
             final Chart demo = new Chart("Line Chart");
             ClassLoader classLoader = new Main().getClass().getClassLoader();
             Parameters.readParameters(classLoader);
+            Parameters.readAlgorithmParameters(classLoader);
             Parameters.calculateHeuristicValues();
             Parameters.printHeuristic();
 
             List<Integer> iterationBestSolAlloc = null;
-            double minSolutionValue, bestSolValue = 0;
+            BigDecimal minSolutionValue, bestSolValue = BigDecimal.ZERO;
             int numOfTargets = Parameters.getNumOfTargets();
             int numOfWeapons = Parameters.getNumOfWeapons();
-            int numOfAnts;
             int antNo;
             int iter = 0;
 
-            if (numOfTargets > numOfWeapons) {
-                numOfAnts = numOfTargets;
-            } else {
-                numOfAnts = numOfWeapons;
-            }
-
-            Parameters.numOfAnts = numOfAnts;
-
             Solution solution = new Solution();
-            Solution constructedSol = new Solution();
 
             Parameters.calculatePheromoneValues(solution.getSolutionValue());
             Parameters.printPheromons();
 
             while (LocalTime.now().isBefore(Parameters.END_TIME)) {
-                minSolutionValue = Double.MAX_VALUE;
+                minSolutionValue = BigDecimal.valueOf(Double.MAX_VALUE);
                 antNo = 1;
 
-                while (antNo <= numOfAnts) {
+                while (antNo <= Parameters.NUMBER_OF_ANTS) {
+                    Solution constructedSol = new Solution();
                     constructedSol.constructSolution();
-                    if (constructedSol.getSolutionValue() < minSolutionValue) {
+                    if (constructedSol.getSolutionValue().compareTo(minSolutionValue) == -1) {             //constructedSol.getSolutionValue() < minSolutionValue
+                        minSolutionValue = constructedSol.getSolutionValue();
                         bestSolValue = constructedSol.getSolutionValue();
                         iterationBestSolAlloc = constructedSol.getAssignment();
-                        if (constructedSol.getSolutionValue() < solution.getSolutionValue()) {
-                            solution = constructedSol;
+                        if (constructedSol.getSolutionValue().compareTo(solution.getSolutionValue()) == -1) {     //constructedSol.getSolutionValue() < solution.getSolutionValue()
+                            solution.setAssignment(constructedSol.getAssignment());
+                            solution.setSolutionValue(constructedSol.getSolutionValue());
+
                         }
                     }
                     Parameters.calculateHeuristicValues();
                     antNo++;
+                    Parameters.resetTargetValues();
                 }
                 Parameters.updatePheromoneValues(iterationBestSolAlloc, bestSolValue);
-                demo.addResult(iter++, solution.getSolutionValue());
+                demo.addResult(iter++, solution.getSolutionValue().doubleValue());
             }
             System.out.println(solution.getSolutionValue());
 
