@@ -20,8 +20,8 @@ public class Solution {
                 assignment.set(k, i);
             }
             updatePheromoneValuesLocally(k);
-            BigDecimal subtract = BigDecimal.ONE.subtract(Parameters.getKillProbability(i, k));
-            Parameters.setTargetValue(i, Parameters.getTargetValue(i).multiply(subtract));
+//            BigDecimal subtract = BigDecimal.ONE.subtract(Parameters.getKillProbability(i, k));
+//            Parameters.setTargetValue(i, Parameters.getTargetValue(i).multiply(subtract));
             Parameters.calculateHeuristicValues();
         }
 

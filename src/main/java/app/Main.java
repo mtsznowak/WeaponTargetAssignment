@@ -5,6 +5,7 @@ import setup.Parameters;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -47,8 +48,8 @@ public class Main {
                     }
                     Parameters.calculateHeuristicValues();
                     antNo++;
+                    Parameters.resetTargetValues();
                 }
-                Parameters.resetTargetValues();
                 Parameters.updatePheromoneValues(iterationBestSolAlloc, bestSolValue);
 
             }

@@ -119,7 +119,7 @@ public class Parameters {
 
         for (int i = 0; i < numOfTargets; i++) {
             for (int k = 0; k < numOfWeapons; k++) {
-                BigDecimal tmp = targetValues.get(i).multiply(killProbabilities.get(i).get(k));
+                BigDecimal tmp = targetValues.get(i).multiply(killProbabilities.get(k).get(i));
                 heuristicValues.get(i).set(k, tmp);
             }
         }
@@ -163,7 +163,7 @@ public class Parameters {
     }
 
     public static BigDecimal getKillProbability(int i, int k) {
-        return killProbabilities.get(i).get(k);
+        return killProbabilities.get(k).get(i);
     }
 
     public static int getNumOfTargets() {
