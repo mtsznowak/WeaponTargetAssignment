@@ -1,7 +1,10 @@
 package app;
 
+import org.jfree.ui.RefineryUtilities;
 import setup.Parameters;
+import ui.Chart;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
@@ -10,6 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            final Chart demo = new Chart("Line Chart");
             ClassLoader classLoader = new Main().getClass().getClassLoader();
             Parameters.readParameters(classLoader);
             Parameters.calculateHeuristicValues();
@@ -21,6 +25,7 @@ public class Main {
             int numOfWeapons = Parameters.getNumOfWeapons();
             int numOfAnts;
             int antNo;
+            int iter = 0;
 
             if (numOfTargets > numOfWeapons) {
                 numOfAnts = numOfTargets;
@@ -53,9 +58,16 @@ public class Main {
                     antNo++;
                 }
                 Parameters.updatePheromoneValues(iterationBestSolAlloc, bestSolValue);
-
+                demo.addResult(iter++, solution.getSolutionValue());
             }
             System.out.println(solution.getSolutionValue());
+
+
+            demo.pack();
+            RefineryUtilities.centerFrameOnScreen(demo);
+            demo.setVisible(true);
+
+
             solution.printAssignments();
         } catch (IOException e) {
             e.printStackTrace();
