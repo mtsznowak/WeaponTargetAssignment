@@ -23,5 +23,5 @@ repositories {
 }
 
 dependencies {
-    compile 'jfree:jfreechart:1.0.9'
+    compile('jfree:jfreechart:1.0.9')
 }
