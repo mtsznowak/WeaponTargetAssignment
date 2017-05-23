@@ -9,7 +9,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalTime;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class Parameters {
@@ -41,7 +40,7 @@ public class Parameters {
         EVAPORATION_RATE = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
         line = bufferedReader.readLine();
         q0 = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
-        END_TIME = START_TIME.plusNanos(ALLOWED_TIME * 1000000);
+        END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
 
         System.out.println("*********************************");
         System.out.println("***** ALGORITHM PARAMETERS: *****");
@@ -156,7 +155,7 @@ public class Parameters {
         System.out.println("HEURISTIC VALUES:");
         for (int i = 0; i < heuristicValues.size(); i++) {
             for (int k = 0; k < heuristicValues.get(i).size(); k++) {
-                System.out.print(heuristicValues.get(i).get(k).setScale(4, BigDecimal.ROUND_HALF_UP) + " ");
+                System.out.print(heuristicValues.get(i).get(k).setScale(4, BigDecimal.ROUND_HALF_UP) + "\t");
             }
             System.out.println();
         }
