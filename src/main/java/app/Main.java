@@ -4,11 +4,11 @@ import org.jfree.ui.RefineryUtilities;
 import setup.Parameters;
 import ui.Chart;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -31,8 +31,8 @@ public class Main {
 
             Solution solution = new Solution();
 
-            Parameters.calculatePheromoneValues(solution.getSolutionValue());
-            Parameters.printPheromons();
+            Parameters.calculatePheromoneValues(solution.getSolutionValue());       // solution value = MAX
+            Parameters.printPheromones();
 
             while (LocalTime.now().isBefore(Parameters.END_TIME)) {
                 minSolutionValue = BigDecimal.valueOf(Double.MAX_VALUE);
@@ -58,13 +58,12 @@ public class Main {
                 Parameters.updatePheromoneValues(iterationBestSolAlloc, bestSolValue);
                 demo.addResult(iter++, solution.getSolutionValue().doubleValue());
             }
-            System.out.println(solution.getSolutionValue());
-
+            System.out.println("SOLUTION VALUE: " + solution.getSolutionValue().setScale(4, BigDecimal.ROUND_HALF_UP));
+            System.out.println();
 
             demo.pack();
             RefineryUtilities.centerFrameOnScreen(demo);
             demo.setVisible(true);
-
 
             solution.printAssignments();
         } catch (IOException e) {

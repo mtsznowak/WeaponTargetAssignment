@@ -117,6 +117,8 @@ public class Solution {
     }
 
     public void printAssignments() {
-        assignment.forEach(System.out::println);
+        for(int i = 0; i < assignment.size(); i++){
+            System.out.println("WEAPON " + i + " ASSIGNMENT " + assignment.get(i));
+        }
     }
 }
