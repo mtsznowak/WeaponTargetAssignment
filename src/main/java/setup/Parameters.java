@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalTime;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class Parameters {
@@ -37,17 +41,21 @@ public class Parameters {
         EVAPORATION_RATE = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
         line = bufferedReader.readLine();
         q0 = BigDecimal.valueOf(Double.valueOf(line.split(" ")[1]));
-        END_TIME = START_TIME.plusSeconds(ALLOWED_TIME);
+        END_TIME = START_TIME.plusNanos(ALLOWED_TIME * 1000000);
 
-        System.out.println("ALLOWED_TIME " + ALLOWED_TIME);
-        System.out.println("NUMBER_OF_ANTS " + NUMBER_OF_ANTS);
-        System.out.println("PHEROMONE_INCREASE_RATE " + PHEROMONE_INCREASE_RATE);
-        System.out.println("EVAPORATION_RATE " + EVAPORATION_RATE);
-        System.out.println("q0 " + q0);
+        System.out.println("*********************************");
+        System.out.println("***** ALGORITHM PARAMETERS: *****");
+        System.out.println("*********************************");
+        System.out.format("ALLOWED_TIME %18d\n", ALLOWED_TIME);
+        System.out.format("NUMBER_OF_ANTS %17d\n", NUMBER_OF_ANTS);
+        System.out.format("PHEROMONE_INCREASE_RATE %13f\n", PHEROMONE_INCREASE_RATE);
+        System.out.format("EVAPORATION_RATE %20f\n", EVAPORATION_RATE);
+        System.out.format("q0 %34f\n\n", q0);
 
         bufferedReader.close();
     }
 
+    /** Read base parameters from file **/
     public static void readParameters(ClassLoader classLoader) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(classLoader.getResourceAsStream("WTAparams.txt")));
 
@@ -78,8 +86,14 @@ public class Parameters {
             noOfWeapon++;
             line = bufferedReader.readLine();
         }
-        System.out.println(targetValues);
-        System.out.println(killProbabilities);
+
+        System.out.println("*********************************");
+        System.out.println("**** WTA PROBLEM PARAMETERS: ****");
+        System.out.println("*********************************");
+        System.out.println("TARGET VALUES: " + targetValues);
+        System.out.println("KILL PROBABILITIES FOR TARGETS:");
+        killProbabilities.forEach( (key, list) -> System.out.println("WEAPON " + key + " " + list));
+        System.out.println();
 
         bufferedReader.close();
         initMaps();
@@ -139,23 +153,32 @@ public class Parameters {
     }
 
     public static void printHeuristic() {
-        System.out.println("Heuristic values:");
+        System.out.println("HEURISTIC VALUES:");
         for (int i = 0; i < heuristicValues.size(); i++) {
             for (int k = 0; k < heuristicValues.get(i).size(); k++) {
-                System.out.print(heuristicValues.get(i).get(k) + " ");
+                System.out.print(heuristicValues.get(i).get(k).setScale(4, BigDecimal.ROUND_HALF_UP) + " ");
             }
             System.out.println();
         }
+        System.out.println();
     }
 
-    public static void printPheromons() {
-        System.out.println("Pheromons values:");
+    private static String format(BigDecimal x, int scale) {
+        NumberFormat formatter = new DecimalFormat("0.0E0");
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        formatter.setMinimumFractionDigits(scale);
+        return formatter.format(x);
+    }
+
+    public static void printPheromones() {
+        System.out.println("PHEROMONES VALUES:");
         for (int i = 0; i < pheromoneValues.size(); i++) {
             for (int k = 0; k < pheromoneValues.get(i).size(); k++) {
-                System.out.print(pheromoneValues.get(i).get(k) + " ");
+                System.out.print(format(pheromoneValues.get(i).get(k), 10) + " ");
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public static BigDecimal getTargetValue(int index) {
