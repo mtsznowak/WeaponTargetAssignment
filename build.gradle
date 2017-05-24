@@ -25,3 +25,12 @@ repositories {
 dependencies {
     compile('jfree:jfreechart:1.0.9')
 }
+jar {
+  manifest {
+    attributes(
+          'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+      'Main-Class': 'app.Main'
+      )
+  }
+    from configurations.compile.collect { entry -> zipTree(entry) }
+}
